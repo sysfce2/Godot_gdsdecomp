@@ -213,7 +213,7 @@ public static class NugetDetails
 	public static async Task<string?> DownloadPackageToLocalCache(string name, string version,
 		CancellationToken cancellationToken)
 	{
-		string p = Path.Combine(UserPackagesPath, name, version);
+		string p = Path.Combine(UserPackagesPath, name.ToLower(), version.ToLower());
 		if (File.Exists(p))
 		{
 			return p;
