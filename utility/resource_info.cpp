@@ -62,9 +62,6 @@ Dictionary ResourceInfo::to_dict() const {
 void ResourceInfo::set_on_resource(Ref<Resource> res) const {
 	res->set_meta(META_COMPAT, this);
 }
-void ResourceInfo::_set_on_resource(Resource *res) const {
-	res->set_meta(META_COMPAT, this);
-}
 Ref<ResourceInfo> ResourceInfo::get_info_from_resource(Ref<Resource> res) {
 	return res->get_meta(META_COMPAT, Ref<ResourceInfo>());
 }

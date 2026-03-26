@@ -25,7 +25,7 @@ struct GDScriptDecompVersion {
 
 	int get_major_version() const;
 
-	static GDScriptDecomp *create_decomp_for_commit(int p_commit_hash);
+	static Ref<GDScriptDecomp> create_decomp_for_commit(int p_commit_hash);
 	static Vector<Ref<GDScriptDecomp>> get_decomps_for_bytecode_ver(int bytecode_version, bool include_dev = false);
 	static Vector<GDScriptDecompVersion> get_decomp_versions(bool include_dev = true, int ver_major = 0);
 
@@ -34,5 +34,5 @@ struct GDScriptDecompVersion {
 	static int register_decomp_version_custom(Dictionary p_custom_def);
 	static int register_derived_decomp_version_custom(int revision, Dictionary p_custom_def);
 
-	GDScriptDecomp *create_decomp() const;
+	Ref<GDScriptDecomp> create_decomp() const;
 };

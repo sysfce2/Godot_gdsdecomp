@@ -16,8 +16,10 @@
 #include "scene/3d/navigation/navigation_region_3d.h"
 #include "scene/3d/occluder_instance_3d.h"
 #include "scene/3d/physics/area_3d.h"
+#include "scene/3d/physics/collision_shape_3d.h"
 #include "scene/3d/physics/rigid_body_3d.h"
 #include "scene/3d/physics/static_body_3d.h"
+#include "scene/main/scene_tree.h"
 #include "scene/resources/3d/box_shape_3d.h"
 #include "scene/resources/3d/capsule_shape_3d.h"
 #include "scene/resources/3d/cylinder_shape_3d.h"
@@ -1759,7 +1761,7 @@ Node *GLBExporterInstance::_set_stuff_from_instanced_scene(Node *root) {
 		// Force re-compute animation tracks.
 		Vector<Ref<AnimationLibrary>> anim_libs;
 		AnimationPlayer *player = Object::cast_to<AnimationPlayer>(animation_player_nodes[node_i]);
-		List<StringName> anim_lib_names;
+		LocalVector<StringName> anim_lib_names;
 		player->get_animation_library_list(&anim_lib_names);
 		for (auto &lib_name : anim_lib_names) {
 			Ref<AnimationLibrary> lib = player->get_animation_library(lib_name);
@@ -1772,7 +1774,7 @@ Node *GLBExporterInstance::_set_stuff_from_instanced_scene(Node *root) {
 		auto current_pos = current_anmation.is_empty() ? 0 : player->get_current_animation_position();
 		int64_t max_fps = -1;
 		for (auto &anim_lib : anim_libs) {
-			List<StringName> anim_names;
+			LocalVector<StringName> anim_names;
 			anim_lib->get_animation_list(&anim_names);
 			if (ver_major <= 3 && anim_names.size() > 0) {
 				Ref<RegEx> mesh_surface_re = RegEx::create_from_string(":mesh:surface_(\\d+)");
@@ -1808,7 +1810,7 @@ Node *GLBExporterInstance::_set_stuff_from_instanced_scene(Node *root) {
 					info->extra.set(converted_paths_from_3_x, true);
 				}
 
-				player->set_current_animation(anim_names.front()->get());
+				player->set_current_animation(*anim_names.begin());
 				player->advance(0);
 				player->set_current_animation(current_anmation);
 				if (!current_anmation.is_empty()) {

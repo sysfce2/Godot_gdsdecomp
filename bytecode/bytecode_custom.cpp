@@ -166,7 +166,7 @@ GDScriptDecomp_custom::GDScriptDecomp_custom(Dictionary p_custom_def) {
 	functions = p_custom_def.get("func_names", Vector<String>());
 }
 
-GDScriptDecomp_custom *GDScriptDecomp_custom::_create_from_json(Dictionary p_custom_def) {
+Ref<GDScriptDecomp_custom> GDScriptDecomp_custom::create_from_json(Dictionary p_custom_def) {
 	if ((int)p_custom_def.get("bytecode_version", 0) == 0) {
 		ERR_FAIL_V_MSG(nullptr, "Bytecode version is required");
 	}
@@ -194,9 +194,5 @@ GDScriptDecomp_custom *GDScriptDecomp_custom::_create_from_json(Dictionary p_cus
 	// if (p_custom_def.get("date", "") == "") {
 	// 	return nullptr;
 	// }
-	return memnew(GDScriptDecomp_custom(p_custom_def));
-}
-
-Ref<GDScriptDecomp_custom> GDScriptDecomp_custom::create_from_json(Dictionary p_custom_def) {
-	return Ref<GDScriptDecomp_custom>(_create_from_json(p_custom_def));
+	return Ref<GDScriptDecomp_custom>(memnew(GDScriptDecomp_custom(p_custom_def)));
 }

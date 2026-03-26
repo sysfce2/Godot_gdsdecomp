@@ -118,15 +118,15 @@ public:
 		}
 	}
 
-	static Resource *make_fakescript_or_mising_resource(const String &path, const String &type, const String &scene_id = "", bool no_fake_script = false) {
-		Resource *ret;
+	static Ref<Resource> make_fakescript_or_mising_resource(const String &path, const String &type, const String &scene_id = "", bool no_fake_script = false) {
+		Ref<Resource> ret;
 		if (!no_fake_script && (type == "Script" || type == "GDScript" || type == "CSharpScript")) {
-			FakeScript *res{ memnew(FakeScript) };
+			Ref<FakeScript> res{ memnew(FakeScript) };
 			res->set_original_class(type);
 			res->set_instance_recording_properties(false);
 			ret = res;
 		} else {
-			MissingResource *res{ memnew(MissingResource) };
+			Ref<MissingResource> res{ memnew(MissingResource) };
 			res->set_original_class(type);
 			res->set_recording_properties(true);
 			ret = res;
@@ -152,25 +152,25 @@ public:
 		return res;
 	}
 
-	static Resource *create_missing_main_resource(const String &path, const String &type, const ResourceUID::ID uid, bool no_fake_script = false) {
-		Resource *res{ make_fakescript_or_mising_resource(path, type, "", no_fake_script) };
+	static Ref<Resource> create_missing_main_resource(const String &path, const String &type, const ResourceUID::ID uid, bool no_fake_script = false) {
+		Ref<Resource> res{ make_fakescript_or_mising_resource(path, type, "", no_fake_script) };
 		Ref<ResourceInfo> compat;
 		compat.instantiate();
 		compat->uid = uid;
 		compat->type = type;
 		compat->topology_type = ResourceInfo::MAIN_RESOURCE;
-		compat->_set_on_resource(res);
+		compat->set_on_resource(res);
 		return res;
 	}
 
-	static Resource *create_missing_internal_resource(const String &path, const String &type, const String &scene_id, bool no_fake_script = false) {
-		Resource *res{ make_fakescript_or_mising_resource("", type, scene_id, no_fake_script) };
+	static Ref<Resource> create_missing_internal_resource(const String &path, const String &type, const String &scene_id, bool no_fake_script = false) {
+		Ref<Resource> res{ make_fakescript_or_mising_resource("", type, scene_id, no_fake_script) };
 		Ref<ResourceInfo> compat;
 		compat.instantiate();
 		compat->uid = ResourceUID::INVALID_ID;
 		compat->type = type;
 		compat->topology_type = ResourceInfo::INTERNAL_RESOURCE;
-		compat->_set_on_resource(res);
+		compat->set_on_resource(res);
 		return res;
 	}
 

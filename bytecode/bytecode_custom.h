@@ -39,6 +39,5 @@ public:
 	virtual bool is_custom() const override { return true; }
 	GDScriptDecomp_custom() {}
 
-	static GDScriptDecomp_custom *_create_from_json(Dictionary p_custom_def);
 	static Ref<GDScriptDecomp_custom> create_from_json(Dictionary p_custom_def);
 };

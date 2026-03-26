@@ -131,7 +131,7 @@ void register_decomp_versions() {
 	ClassDB::register_class<GDScriptDecomp_custom>();
 }
 
-GDScriptDecomp *GDScriptDecompVersion::create_decomp_for_commit(int p_commit_hash) {
+Ref<GDScriptDecomp> GDScriptDecompVersion::create_decomp_for_commit(int p_commit_hash) {
 	switch (p_commit_hash) {
 		case 0xebc36a7: return memnew(GDScriptDecomp_ebc36a7);
 		case 0x2e216b5: return memnew(GDScriptDecomp_2e216b5);
@@ -297,9 +297,9 @@ Vector<GDScriptDecompVersion> GDScriptDecompVersion::get_decomp_versions(bool in
 	return versions;
 }
 
-GDScriptDecomp *GDScriptDecompVersion::create_decomp() const {
+Ref<GDScriptDecomp> GDScriptDecompVersion::create_decomp() const {
 	if (is_custom()) {
-		return GDScriptDecomp_custom::_create_from_json(custom);
+		return GDScriptDecomp_custom::create_from_json(custom);
 	}
 	return create_decomp_for_commit(commit);
 }

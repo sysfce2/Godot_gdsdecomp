@@ -1,6 +1,7 @@
 //_PRELUDE_
 // clang-format off
 
+#include "core/object/class_db.h"
 #include "bytecode/bytecode_versions.h"
 
 #include "bytecode/bytecode_custom.h"
@@ -11,7 +12,7 @@ void register_decomp_versions() {
 	ClassDB::register_class<GDScriptDecomp_custom>();
 }
 
-GDScriptDecomp *GDScriptDecompVersion::create_decomp_for_commit(int p_commit_hash) {
+Ref<GDScriptDecomp> GDScriptDecompVersion::create_decomp_for_commit(int p_commit_hash) {
 	switch (p_commit_hash) {
 //_BYTECODE_CASE_STATEMENTS_
 		default:
@@ -61,9 +62,9 @@ Vector<GDScriptDecompVersion> GDScriptDecompVersion::get_decomp_versions(bool in
 	return versions;
 }
 
-GDScriptDecomp *GDScriptDecompVersion::create_decomp() const {
+Ref<GDScriptDecomp> GDScriptDecompVersion::create_decomp() const {
 	if (is_custom()) {
-		return GDScriptDecomp_custom::_create_from_json(custom);
+		return GDScriptDecomp_custom::create_from_json(custom);
 	}
 	return create_decomp_for_commit(commit);
 }

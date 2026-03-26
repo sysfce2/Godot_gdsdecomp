@@ -655,7 +655,7 @@ Error ResourceLoaderCompatText::load() {
 
 		bool not_cached = false;
 		bool fake_script = false;
-		MissingResource *missing_resource = nullptr;
+		Ref<MissingResource> missing_resource = nullptr;
 		Ref<ResourceCompatConverter> converter;
 		auto init_missing_internal_resource([&](bool no_fake_script) {
 			auto nres = CompatFormatLoader::create_missing_internal_resource(path, type, id, no_fake_script);
@@ -690,7 +690,7 @@ Error ResourceLoaderCompatText::load() {
 						missing_resource = memnew(MissingResource);
 						missing_resource->set_original_class(type);
 						missing_resource->set_recording_properties(true);
-						obj = missing_resource;
+						obj = missing_resource.ptr();
 					} else {
 						error_text = vformat("Can't create sub resource of type '%s'", type);
 						_printerr();
@@ -799,7 +799,7 @@ Error ResourceLoaderCompatText::load() {
 					}
 
 					if (set_valid) {
-						if (!missing_resource && ver_major <= 2 && assign == "resource/name") {
+						if (missing_resource.is_null() && ver_major <= 2 && assign == "resource/name") {
 							assign = "resource_name";
 						}
 						bool valid = false;
@@ -826,7 +826,7 @@ Error ResourceLoaderCompatText::load() {
 			}
 		}
 
-		if (missing_resource) {
+		if (missing_resource.is_valid()) {
 			missing_resource->set_recording_properties(false);
 			if (converter.is_valid()) {
 				Ref<ResourceInfo> compat = ResourceInfo::get_info_from_resource(missing_resource);
@@ -880,7 +880,7 @@ Error ResourceLoaderCompatText::load() {
 		}
 
 		bool fake_script = false;
-		MissingResource *missing_resource = nullptr;
+		Ref<MissingResource> missing_resource = nullptr;
 		Ref<ResourceCompatConverter> converter;
 		auto init_missing_main_resource([&](bool no_fake_script) {
 			auto res = CompatFormatLoader::create_missing_main_resource(local_path, res_type, res_uid, no_fake_script);
@@ -914,10 +914,12 @@ Error ResourceLoaderCompatText::load() {
 			}
 
 			if (!resource.is_valid()) {
+				Ref<Resource> res;
 				Object *obj = ClassDB::class_exists(res_type) || !ClassDB::get_compatibility_class(res_type).is_empty() ? ClassDB::instantiate(res_type) : nullptr;
 				if (!obj) {
 					if (ResourceLoader::is_creating_missing_resources_if_class_unavailable_enabled()) {
-						obj = CompatFormatLoader::create_missing_main_resource(local_path, res_type, res_uid);
+						res = CompatFormatLoader::create_missing_main_resource(local_path, res_type, res_uid);
+						obj = res.ptr();
 						if (obj->get_class() == "MissingResource") {
 							missing_resource = Object::cast_to<MissingResource>(obj);
 							missing_resource->set_original_class(res_type);
@@ -1015,7 +1017,7 @@ Error ResourceLoaderCompatText::load() {
 				}
 
 				if (set_valid) {
-					if (!missing_resource && ver_major <= 2 && assign == "resource/name") {
+					if (missing_resource.is_null() && ver_major <= 2 && assign == "resource/name") {
 						assign = "resource_name";
 					}
 					bool valid = false;
@@ -1046,7 +1048,7 @@ Error ResourceLoaderCompatText::load() {
 			*progress = resource_current / float(resources_total);
 		}
 
-		if (missing_resource) {
+		if (missing_resource.is_valid()) {
 			missing_resource->set_recording_properties(false);
 			if (converter.is_valid()) {
 				Ref<ResourceInfo> compat = ResourceInfo::get_info_from_resource(missing_resource);

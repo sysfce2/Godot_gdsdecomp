@@ -4,7 +4,6 @@
 /*************************************************************************/
 #ifdef TOOLS_ENABLED
 #include "editor/editor_node.h"
-#include "editor/settings/editor_settings.h"
 #endif
 /*************************************************************************/
 

@@ -797,7 +797,7 @@ Error ResourceLoaderCompatBinary::load() {
 		Ref<Resource> res;
 		Resource *r = nullptr;
 
-		MissingResource *missing_resource = nullptr;
+		Ref<MissingResource> missing_resource = nullptr;
 		Ref<ResourceCompatConverter> converter;
 
 		if (main && (is_real_load())) {
@@ -810,7 +810,7 @@ Error ResourceLoaderCompatBinary::load() {
 			auto nres = main ? CompatFormatLoader::create_missing_main_resource(path, t, uid, no_fake_script) : CompatFormatLoader::create_missing_internal_resource(path, t, id, no_fake_script);
 			res = Ref<Resource>(nres);
 			if (res->get_class() == "MissingResource") {
-				missing_resource = Object::cast_to<MissingResource>(res.ptr());
+				missing_resource = res;
 			} else {
 				fake_script = true;
 			}
@@ -849,7 +849,7 @@ Error ResourceLoaderCompatBinary::load() {
 						missing_resource = memnew(MissingResource);
 						missing_resource->set_original_class(t);
 						missing_resource->set_recording_properties(true);
-						obj = missing_resource;
+						obj = missing_resource.ptr();
 					} else {
 						error = ERR_FILE_CORRUPT;
 						ERR_FAIL_V_MSG(ERR_FILE_CORRUPT, vformat("'%s': Resource of unrecognized type in file: '%s'.", local_path, t));
@@ -914,7 +914,7 @@ Error ResourceLoaderCompatBinary::load() {
 			}
 
 			bool set_valid = true;
-			if (value.get_type() == Variant::OBJECT && (!fake_script && missing_resource == nullptr) && ResourceLoader::is_creating_missing_resources_if_class_unavailable_enabled()) {
+			if (value.get_type() == Variant::OBJECT && (!fake_script && missing_resource.is_null()) && ResourceLoader::is_creating_missing_resources_if_class_unavailable_enabled()) {
 				// If the property being set is a missing resource (and the parent is not),
 				// then setting it will most likely not work.
 				// Instead, save it as metadata.
@@ -969,7 +969,7 @@ Error ResourceLoaderCompatBinary::load() {
 			}
 
 			if (set_valid) {
-				if (!missing_resource && ver_major <= 2 && name == "resource/name") {
+				if (missing_resource.is_null() && ver_major <= 2 && name == "resource/name") {
 					name = "resource_name";
 				}
 				bool valid = false;
@@ -985,7 +985,7 @@ Error ResourceLoaderCompatBinary::load() {
 			}
 		}
 
-		if (missing_resource) {
+		if (missing_resource.is_valid()) {
 			missing_resource->set_recording_properties(false);
 			if (converter.is_valid()) {
 				Ref<ResourceInfo> compat = ResourceInfo::get_info_from_resource(missing_resource);

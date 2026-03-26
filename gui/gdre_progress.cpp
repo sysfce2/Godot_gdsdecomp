@@ -34,6 +34,7 @@
 #include "core/object/class_db.h"
 #include "core/os/os.h"
 #include "scene/gui/file_dialog.h"
+#include "scene/main/scene_tree.h"
 #include "servers/display/display_server.h"
 #include "utility/gdre_logger.h"
 

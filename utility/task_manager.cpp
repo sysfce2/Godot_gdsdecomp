@@ -1,4 +1,5 @@
 #include "task_manager.h"
+#include "core/object/message_queue.h"
 #include "gui/gdre_progress.h"
 #include "main/main.h"
 #include "servers/rendering/rendering_server.h"

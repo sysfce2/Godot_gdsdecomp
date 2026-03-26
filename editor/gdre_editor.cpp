@@ -28,6 +28,7 @@
 #include "scene/gui/button.h"
 #include "scene/gui/texture_rect.h"
 #include "scene/main/canvas_item.h"
+#include "scene/main/scene_tree.h"
 #include "scene/resources/image_texture.h"
 
 #include "core/version_generated.gen.h"
@@ -583,14 +584,14 @@ void GodotREEditor::_decompile_process() {
 	print_warning("GDScriptDecomp{" + itos(script_dialog_d->get_bytecode_version()) + "}", RTR("Decompile"));
 
 	String failed_files;
-	GDScriptDecomp *dce = GDScriptDecompVersion::create_decomp_for_commit(script_dialog_d->get_bytecode_version());
+	Ref<GDScriptDecomp> dce = GDScriptDecompVersion::create_decomp_for_commit(script_dialog_d->get_bytecode_version());
 
-	if (!dce) {
+	if (dce.is_null()) {
 		show_warning(failed_files, RTR("Decompile"), RTR("Invalid bytecode version!"));
 		return;
 	}
 
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_decompile", RTR("Decompiling files..."), files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_decompile", RTR("Decompiling files..."), files.size(), true));
 	for (int i = 0; i < files.size(); i++) {
 		print_warning(RTR("decompiling") + " " + files[i].get_file(), RTR("Decompile"));
 
@@ -620,8 +621,8 @@ void GodotREEditor::_decompile_process() {
 		}
 	}
 
-	memdelete(pr);
-	memdelete(dce);
+	pr.unref();
+	dce.unref();
 
 	if (failed_files.length() > 0) {
 		show_warning(failed_files, RTR("Decompile"), RTR("At least one error was detected!"));
@@ -667,7 +668,7 @@ void GodotREEditor::_compile_process() {
 
 	String failed_files;
 	Ref<GDScriptDecomp> dce = GDScriptDecomp::create_decomp_for_commit(rev);
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_compile", RTR("Compiling files..."), files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_compile", RTR("Compiling files..."), files.size(), true));
 
 	for (int i = 0; i < files.size(); i++) {
 		print_warning(RTR("compiling") + " " + files[i].get_file(), RTR("Compile"));
@@ -711,7 +712,7 @@ void GodotREEditor::_compile_process() {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 
 	if (failed_files.length() > 0) {
 		show_warning(failed_files, RTR("Compile"), RTR("At least one error was detected!"));
@@ -899,7 +900,7 @@ void GodotREEditor::_res_smpl_2_wav_request(const Vector<String> &p_files) {
 }
 
 void GodotREEditor::_res_smpl_2_wav_process() {
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_wav2_res", RTR("Converting files..."), res_files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_wav2_res", RTR("Converting files..."), res_files.size(), true));
 
 	String failed_files;
 	Ref<ResourceFormatLoaderBinary> rl = memnew(ResourceFormatLoaderBinary);
@@ -918,7 +919,7 @@ void GodotREEditor::_res_smpl_2_wav_process() {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 	res_files = Vector<String>();
 
 	if (failed_files.length() > 0) {
@@ -949,7 +950,7 @@ void GodotREEditor::_res_ostr_2_ogg_request(const Vector<String> &p_files) {
 }
 
 void GodotREEditor::_res_ostr_2_ogg_process() {
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_ogg2_res", RTR("Converting files..."), res_files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_ogg2_res", RTR("Converting files..."), res_files.size(), true));
 
 	String failed_files;
 	Ref<ResourceFormatLoaderBinary> rl = memnew(ResourceFormatLoaderBinary);
@@ -970,7 +971,7 @@ void GodotREEditor::_res_ostr_2_ogg_process() {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 	res_files = Vector<String>();
 
 	if (failed_files.length() > 0) {
@@ -1001,7 +1002,7 @@ void GodotREEditor::_res_stex_2_png_request(const Vector<String> &p_files) {
 }
 
 void GodotREEditor::_res_stxt_2_png_process() {
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_st2pnh_res", RTR("Converting files..."), res_files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_st2pnh_res", RTR("Converting files..."), res_files.size(), true));
 
 	String failed_files;
 	for (int i = 0; i < res_files.size(); i++) {
@@ -1021,7 +1022,7 @@ void GodotREEditor::_res_stxt_2_png_process() {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 	res_files = Vector<String>();
 
 	if (failed_files.length() > 0) {
@@ -1064,7 +1065,7 @@ void GodotREEditor::_res_bin_2_txt_request(const Vector<String> &p_files) {
 }
 
 void GodotREEditor::_res_bin_2_txt_process() {
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_b2t_res", RTR("Converting files..."), res_files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_b2t_res", RTR("Converting files..."), res_files.size(), true));
 
 	String failed_files;
 	for (int i = 0; i < res_files.size(); i++) {
@@ -1092,7 +1093,7 @@ void GodotREEditor::_res_bin_2_txt_process() {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 	res_files = Vector<String>();
 
 	if (failed_files.length() > 0) {
@@ -1124,7 +1125,7 @@ void GodotREEditor::_export_resource_output_request(const String &p_path) {
 }
 
 void GodotREEditor::_export_resource_process(const String &p_output_path) {
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_export_res", RTR("Exporting resources..."), res_files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_export_res", RTR("Exporting resources..."), res_files.size(), true));
 
 	String failed_files;
 	for (int i = 0; i < res_files.size(); i++) {
@@ -1141,7 +1142,7 @@ void GodotREEditor::_export_resource_process(const String &p_output_path) {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 	res_files = Vector<String>();
 
 	if (failed_files.length() > 0) {
@@ -1184,7 +1185,7 @@ void GodotREEditor::_res_txt_2_bin_request(const Vector<String> &p_files) {
 }
 
 void GodotREEditor::_res_txt_2_bin_process() {
-	EditorProgressGDDC *pr = memnew(EditorProgressGDDC(ne_parent, "re_t2b_res", RTR("Converting files..."), res_files.size(), true));
+	Ref<EditorProgressGDDC> pr = memnew(EditorProgressGDDC(ne_parent, "re_t2b_res", RTR("Converting files..."), res_files.size(), true));
 
 	String failed_files;
 	for (int i = 0; i < res_files.size(); i++) {
@@ -1208,7 +1209,7 @@ void GodotREEditor::_res_txt_2_bin_process() {
 		}
 	}
 
-	memdelete(pr);
+	pr.unref();
 	res_files = Vector<String>();
 
 	if (failed_files.length() > 0) {

@@ -5,6 +5,7 @@
 
 struct dep_info;
 struct BatchExportToken;
+class PackedScene;
 
 #include "modules/gltf/extensions/gltf_document_extension.h"
 
