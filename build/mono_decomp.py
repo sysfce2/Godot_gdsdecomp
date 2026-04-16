@@ -49,7 +49,7 @@ def get_godot_mono_decomp_lib_dir(godot_mono_decomp_dir, target_platform, target
     triplet = get_godot_mono_triplet(target_platform, target_arch)
     target_framework = "net9.0"
     csproj_path = os.path.join(godot_mono_decomp_dir, "GodotMonoDecompNativeAOT.csproj")
-    with open(csproj_path, "r") as csproj_file:
+    with open(csproj_path, "r", encoding="utf-8") as csproj_file:
         for line in csproj_file:
             if "TargetFramework" in line:
                 target_framework = line.split(">")[1].split("<")[0].strip()
